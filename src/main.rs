@@ -1,12 +1,15 @@
+/*
+* Build with: cargo build --release
+* Run with: espflash flash ./target/riscv32imc-unknown-none-elf/release/esp-embassy --monitor
+*/
+
 #![no_std]
 #![no_main]
 
 use embassy_executor::Spawner;
 use embassy_time::{Duration, Timer};
 use esp_backtrace as _;
-use esp_hal::{
-    clock::ClockControl, delay::Delay, peripherals::Peripherals, prelude::*, system::SystemControl,
-};
+use esp_hal::{clock::ClockControl, peripherals::Peripherals, prelude::*, system::SystemControl};
 use esp_hal_embassy::{self};
 
 #[main]
@@ -32,17 +35,21 @@ async fn main(spawner: Spawner) {
     // .unwrap();
 
     spawner.spawn(task_1()).ok();
-
-    loop {
-        log::info!("Hello from Main");
-        Timer::after(Duration::from_millis(500)).await;
-    }
+    spawner.spawn(task_2()).ok();
 }
 
 #[embassy_executor::task]
 async fn task_1() {
     loop {
-        log::info!("Hello from an embassy thread");
-        Timer::after(Duration::from_millis(1_000)).await;
+        log::info!("Hello from an embassy thread no. 1");
+        Timer::after(Duration::from_millis(2_000)).await;
+    }
+}
+
+#[embassy_executor::task]
+async fn task_2() {
+    loop {
+        log::info!("Hello from an embassy thread no. 2");
+        Timer::after(Duration::from_millis(500)).await;
     }
 }
