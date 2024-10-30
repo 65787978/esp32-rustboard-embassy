@@ -1,5 +1,5 @@
 [package]
-name = "esp-embassy"
+name = "esp32-rustboard-embassy"
 version = "0.1.0"
 authors = ["th3-cr34t0r"]
 edition = "2021"
@@ -12,16 +12,11 @@ esp-backtrace = { version = "0.14.0", features = [
     "panic-handler",
     "println",
 ] }
-esp-hal = { version = "0.20.1", features = [ "esp32c3" ] }
+esp-hal = { version = "0.21.1", features = [ "esp32c3"] }
 esp-println = { version = "0.11.0", features = ["esp32c3", "log"] }
 log = { version = "0.4.21" }
 embedded-io = "0.6.1"
-esp-wifi = { version = "0.8.0", features = [
-    "esp32c3",
-    "phy-enable-usb",
-    "utils",
-    "wifi",
-] }
+esp-wifi = { version = "0.10.1", features = ["esp32c3", "ble", "async"]}
 heapless = { version = "0.8.0", default-features = false }
 smoltcp = { version = "0.11.0", default-features = false, features = [
     "medium-ethernet",
@@ -36,7 +31,10 @@ smoltcp = { version = "0.11.0", default-features = false, features = [
 ] }
 embassy-executor = "0.6.0"
 embassy-time = { version = "0.3.2", features = ["generic-queue-8"] }
-esp-hal-embassy = { version = "0.3.0", features = ["esp32c3"] }
+esp-hal-embassy = { version = "0.4.0", features = ["esp32c3"] }
+embassy-sync = "0.6.0"
+bleps = { git = "https://github.com/bjoernQ/bleps", package = "bleps", rev = "a5148d8ae679e021b78f53fd33afb8bb35d0b62e", features = [ "macros", "async"] }
+esp-alloc = "0.5.0"
 [profile.dev]
 # Rust debug is too slow.
 # For debug builds always builds with some optimization
