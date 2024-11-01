@@ -1,6 +1,9 @@
 use bleps::{
-    ad_structure::{create_advertising_data, AdStructure},
+    ad_structure::{
+        create_advertising_data, AdStructure, BR_EDR_NOT_SUPPORTED, LE_GENERAL_DISCOVERABLE,
+    },
     asynch::Ble,
+    att::Uuid,
     attribute_server::{AttributeServer, NotificationData, WorkResult},
     gatt, HciConnector,
 };
@@ -11,8 +14,10 @@ use esp_hal::{
     time,
     timer::timg::TimerGroup,
 };
+use esp_println::println;
 use esp_wifi::{ble::controller::asynch::BleConnector, init, EspWifiInitFor};
-
+use user_config::DEVICE_NAME;
+mod user_config;
 struct Blee {
     report: u8,
 }
@@ -38,5 +43,24 @@ pub async fn send_report(bluetooth: BT, timg0: TIMG0, rng: RNG, radio_clk: RADIO
     let now = || time::now().duration_since_epoch().to_millis();
     let mut ble = Ble::new(connector, now);
 
-    loop {}
+    loop {
+        println!("{:?}", ble.init().await);
+        println!("{:?}", ble.cmd_set_le_advertising_parameters().await);
+        println!(
+            "{:?}",
+            ble.cmd_set_le_advertising_data(
+                create_advertising_data(&[
+                    AdStructure::Flags(LE_GENERAL_DISCOVERABLE | BR_EDR_NOT_SUPPORTED),
+                    AdStructure::ServiceUuids16(&[Uuid::Uuid16(0x1809)]),
+                    AdStructure::CompleteLocalName(DEVICE_NAME),
+                ])
+                .unwrap()
+            )
+            .await
+        );
+
+        println!("{:?}", ble.cmd_set_le_advertise_enable(true).await);
+
+        println!("started advertising");
+    }
 }
