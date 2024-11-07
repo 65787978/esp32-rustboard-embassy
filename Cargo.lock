@@ -564,6 +564,7 @@ version = "0.1.0"
 dependencies = [
  "bleps",
  "embassy-executor",
+ "embassy-futures",
  "embassy-sync",
  "embassy-time",
  "embedded-io",
